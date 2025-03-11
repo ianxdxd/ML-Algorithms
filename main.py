@@ -2,16 +2,19 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 from sklearn.model_selection import train_test_split
+from sklearn.datasets import make_regression
 from Utils.evaluation_metrics import EvaluationMetrics
 from Supervised.regression import LinearRegression
 
 
 def regressions(df_path: str, validation_df_path: str, target: str):
-    df = pd.read_csv(df_path)
-    y = df[target]
-    X = df.drop(labels=target, axis=1)
-    X = X.reset_index(drop=True)
-    y = y.reset_index(drop=True)
+    # df = pd.read_csv(df_path)
+    # y = df[target]
+    # X = df.drop(labels=target, axis=1)
+    # X = X.reset_index(drop=True)
+    # y = y.reset_index(drop=True)
+
+    X, y = make_regression(n_samples=500, n_features=1, noise=15, random_state=4)
 
     # if validation_df_path:
     #     validation_df = pd.read_csv(validation_df_path)
@@ -22,7 +25,7 @@ def regressions(df_path: str, validation_df_path: str, target: str):
         X, y, test_size=0.33, random_state=42
     )
 
-    lr = LinearRegression(300, 0.001)
+    lr = LinearRegression(1000, 0.001)
     lr.gradientDescent(X_train, y_train)
     lr.printWeights()
     y_pred = lr.predict(X_train)
