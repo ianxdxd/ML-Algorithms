@@ -3,7 +3,7 @@ from Utils.weights import Weights
 
 
 class Regression:
-    def __init__(self, n_iter: int = 100, l_rate: float = 0.001):
+    def __init__(self, n_iter: int, l_rate: float):
         self.n_iter = n_iter
         self.l_rate = l_rate
         self.w = None
@@ -21,15 +21,9 @@ class Regression:
         return np.dot(X, self.w) + self.b
 
     def fit(self, X, y, reg_factor: str = None):
-        """
-        i -> number of samples
-        j -> number of features
-        """
         n_samples, n_features = X.shape
-        print(self.w)
         if self.w is None:  # persisting weights
-            self.w = Weights(n_features).random_uniform()
-        print(self.w)
+            self.w = Weights(n_features).random_rand()
         y = np.reshape(y, (-1, 1))  # transform an array to a column vector
         regularization = self.regularize()
 
@@ -56,7 +50,7 @@ class LinearRegression(Regression):
 
     def leastSquares(X, y):
         """
-        This algorithm works by making the total of the squares of the erros as
+        This algorithm works by making the total of the squares of the errors as
         small as possible. However, this model is sensitive to outliers, adding bias
         and pulling the line towards it.
         """

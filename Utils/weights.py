@@ -13,6 +13,9 @@ class Weights:
         self.seed = 42
         np.random.seed(self.seed)
 
+    def random_rand(self):
+        return np.random.rand(self.n_features, 1)
+
     def random_normal(self):
         return np.random.normal(-self.lim, self.lim, (self.n_features, 1))
 
