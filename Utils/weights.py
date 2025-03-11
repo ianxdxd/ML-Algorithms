@@ -7,12 +7,14 @@ class Weights:
     If represented as a column vector (n x 1), proper reshaping is required to ensure a correct dot product.
     """
 
-    def __init__(self):
-        pass
+    def __init__(self, n_features: int):
+        self.lim = 1 / np.sqrt(n_features)
+        self.n_features = n_features
+        self.seed = 42
+        np.random.seed(self.seed)
 
-    def random_normal(self, n_features: int):
-        return np.random.normal(0, 1, (n_features,))
+    def random_normal(self):
+        return np.random.normal(-self.lim, self.lim, (self.n_features, 1))
 
-    def random_uniform(self, w, n_features: int):
-        lim = 1 / np.sqrt(n_features)
-        return np.random.uniform(-lim, +lim, (n_features,))
+    def random_uniform(self):
+        return np.random.uniform(-self.lim, self.lim, (self.n_features, 1))
