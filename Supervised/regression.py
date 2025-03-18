@@ -23,17 +23,17 @@ class Regression:
     def fit(self, X, y, reg_factor: str = None):
         n_samples, n_features = X.shape
         if self.w is None:  # persisting weights
-            self.w = Weights(n_features).random_rand()
+            self.w = Weights(n_features).random_uniform()
         y = np.reshape(y, (-1, 1))  # transform an array to a column vector
         regularization = self.regularize()
 
         for _ in range(self.n_iter):
             y_pred = self.predict(X)
             self.error = y - y_pred
-            grad_w = (-2 * np.dot(X.T, self.error) / n_samples) + regularization.get(
+            grad_w = -(np.dot(X.T, self.error) / n_samples) + regularization.get(
                 reg_factor, 0
             )
-            grad_b = (-2 * np.sum(self.error)) / n_samples
+            grad_b = -(np.sum(self.error)) / n_samples
             self.w -= self.l_rate * grad_w  # l_rate * (grad_w + regularization_factor)
             self.b -= self.l_rate * grad_b  # l_rate * grad_b
 
@@ -48,23 +48,27 @@ class LinearRegression(Regression):
     def gradientDescent(self, X, y):
         super().fit(X, y)
 
-    def leastSquares(X, y):
+    def ordinaryleastSquares(self, X, y):
         """
         This algorithm works by making the total of the squares of the errors as
         small as possible. However, this model is sensitive to outliers, adding bias
         and pulling the line towards it.
         """
-        N, _ = X.shape
+
         y = y.reshape(-1, 1)
 
-        m = N * (sum(X * y) - sum(X) * sum(y)) / N * np.pow(sum(X), 2) - np.pow(
-            sum(X), 2
-        )
-        b = (sum(y) - m * sum(X)) / N
-        return m, b
+        x_mean = np.mean(X)
+        y_mean = np.mean(y)
 
-    def ordinaryLeastSquares(X, y):
-        pass
+        self.w = sum((X - x_mean) * (y - y_mean)) / sum(np.pow(X - x_mean, 2))
+        self.b = y_mean - self.w * x_mean
 
-    def moorePenroseLeastSquares(X, y):
-        pass
+    def moorePenroseLeastSquares(self, X, y):
+        y = y.reshape(-1, 1)
+        X = np.c_[np.ones((X.shape[0], 1)), X]  # Add bias term
+
+        # Compute optimal weights
+        theta = np.linalg.inv(X.T @ X) @ X.T @ y
+
+        self.b = theta[0]
+        self.w = theta[1:]
